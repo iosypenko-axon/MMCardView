@@ -8,7 +8,7 @@
 
 import UIKit
 
-let BottomPercent:CGFloat = 0.85
+let BottomPercent:CGFloat = 1
 
 public enum SequenceStyle:Int {
     case normal
@@ -52,7 +52,7 @@ public class CustomCardLayout: UICollectionViewLayout {
         }
     }
     
-    public var bottomShowCount = 6 {
+    public var bottomShowCount = 3 {
         didSet {
             self.collectionView?.performBatchUpdates({
                 self.collectionView?.reloadData()
@@ -68,7 +68,7 @@ public class CustomCardLayout: UICollectionViewLayout {
         }
     }
     
-    public var titleHeight:CGFloat = 56 {
+    public var titleHeight:CGFloat = 45.00 {
         didSet {
             self.collectionView?.performBatchUpdates({ 
                 self.invalidateLayout()
@@ -76,7 +76,7 @@ public class CustomCardLayout: UICollectionViewLayout {
         }
     }
     
-    public var cardHeight: CGFloat = 320 {
+    public var cardHeight: CGFloat = 450 {
         didSet {
             var c = self.cellSize
             c.height = cardHeight
@@ -119,10 +119,14 @@ public class CustomCardLayout: UICollectionViewLayout {
             
             var bottomIdx:CGFloat = 0
             self.attributeList.forEach({
-                if $0.indexPath == select {
-                    self.setSelect(attribute: $0)
+                if $0.indexPath == IndexPath(row: 0, section: 0) {
+                    self.setTop(attribute: $0)
                 } else {
-                    self.setBottom(attribute: $0, bottomIdx: &bottomIdx)
+                    if $0.indexPath == select {
+                        self.setSelect(attribute: $0)
+                    } else {
+                        self.setBottom(attribute: $0, bottomIdx: &bottomIdx)
+                    }
                 }
             })
         } else {
@@ -198,19 +202,22 @@ public class CustomCardLayout: UICollectionViewLayout {
     fileprivate func setSelect(attribute:CardLayoutAttributes) {
         attribute.isExpand = true
         // 0.01 prevent no reload
-        attribute.frame = CGRect.init(x: self.collectionView!.frame.origin.x, y: self.collectionView!.contentOffset.y+0.01 , width: cellSize.width, height: cellSize.height)
+        attribute.frame = CGRect.init(x: self.collectionView!.frame.origin.x, y: self.collectionView!.contentOffset.y+0.01 + titleHeight, width: cellSize.width, height: cellSize.height)
     }
     
     fileprivate func setBottom(attribute:CardLayoutAttributes, bottomIdx:inout CGFloat) {
-        let baseHeight = self.collectionView!.contentOffset.y + collectionView!.bounds.height * 0.90
-        let bottomH = cellSize.height  * 0.1
-        let margin:CGFloat = bottomH/CGFloat(bottomShowCount-1)
+        let baseHeight = self.collectionView!.contentOffset.y + titleHeight + cardHeight
         attribute.isExpand = false
-        let yPos = (self.isFullScreen) ? (self.collectionView!.contentOffset.y + collectionView!.bounds.height) : bottomIdx * margin + baseHeight
-        attribute.frame = CGRect(x: 0, y: yPos, width: cellSize.width, height: cellSize.height)
+        let yPos = (self.isFullScreen) ? (self.collectionView!.contentOffset.y + collectionView!.bounds.height) : bottomIdx * titleHeight + baseHeight
+        attribute.frame = CGRect(x: 0, y: yPos, width: cellSize.width, height: titleHeight)
         bottomIdx += 1
     }
     
+    private func setTop(attribute: CardLayoutAttributes) {
+        attribute.isExpand = false
+        attribute.frame = CGRect(x: 0, y: self.collectionView!.contentOffset.y+0.01, width: cellSize.width, height: cellSize.height)
+    }
+
     override public func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         
         guard let first = attributeList.first(where: { $0.indexPath == indexPath }) else {

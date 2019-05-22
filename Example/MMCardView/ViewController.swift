@@ -18,9 +18,9 @@ class ViewController: UIViewController {
         cardCollection.register(UINib(nibName: "CardCCell", bundle: nil), forCellWithReuseIdentifier: "CardC")
         
         if let layout = cardCollection.collectionViewLayout as? CustomCardLayout {
-            layout.titleHeight = 100.0
+            layout.titleHeight = 45.0
             layout.bottomShowCount = 3
-            layout.cardHeight = 300
+            layout.cardHeight = 379
             layout.showStyle = .cover
         }
     }
