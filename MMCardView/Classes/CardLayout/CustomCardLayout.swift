@@ -118,15 +118,17 @@ public class CustomCardLayout: UICollectionViewLayout {
         if let select = self.selectPath , !update {
             
             var bottomIdx:CGFloat = 0
+            var selectedWasFound: Bool = false
             self.attributeList.forEach({
-                if $0.indexPath == IndexPath(row: 0, section: 0) {
-                    self.setTop(attribute: $0)
-                } else {
+                if !selectedWasFound {
                     if $0.indexPath == select {
                         self.setSelect(attribute: $0)
+                        selectedWasFound = true
                     } else {
-                        self.setBottom(attribute: $0, bottomIdx: &bottomIdx)
+                        self.setTop(attribute: $0)
                     }
+                } else {
+                    self.setBottom(attribute: $0, bottomIdx: &bottomIdx)
                 }
             })
         } else {
