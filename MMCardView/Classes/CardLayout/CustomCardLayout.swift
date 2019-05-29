@@ -19,7 +19,7 @@ class CardLayoutAttributes: UICollectionViewLayoutAttributes {
     var isExpand = false
 
     override func copy(with zone: NSZone? = nil) -> Any {
-        let attribute = super.copy(with: zone) as! CardLayoutAttributes
+        guard let attribute = super.copy(with: zone) as? CardLayoutAttributes else { return UICollectionViewLayoutAttributes()}
         attribute.isExpand = isExpand
         return attribute
     }
@@ -140,7 +140,7 @@ public class CustomCardLayout: UICollectionViewLayout {
                 return
             }
             let list = self.generateAttributeList()
-            if list.count > 0 {
+            if !list.isEmpty {
                 self.attributeList.removeAll()
                 self.attributeList += list
             }
@@ -288,7 +288,7 @@ public class CustomCardLayout: UICollectionViewLayout {
     
     override public func finalizeCollectionViewUpdates() {
         super.finalizeCollectionViewUpdates()
-        if deletePath.count > 0 || insertPath.count > 0 {
+        if !deletePath.isEmpty || !insertPath.isEmpty {
             deletePath.removeAll()
             insertPath.removeAll()
             let vi = self.collectionView!.subviews.sorted { (arg1, arg2) -> Bool in

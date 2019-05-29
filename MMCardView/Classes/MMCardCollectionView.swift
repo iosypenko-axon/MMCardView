@@ -76,7 +76,7 @@ public class MMCollectionView: UICollectionView {
             return
         }
         
-        let current = UIViewController.currentViewController()
+        guard let current = UIViewController.currentViewController() else { return }
         vc.transitioningDelegate = self
         vc.modalPresentationStyle = .custom
         current.present(vc, animated: true, completion: nil)
